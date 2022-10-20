@@ -7,7 +7,7 @@
 
 int isRunning = 1;
 
-void sigint_handler(int sig)
+void sigint_handler(__attribute__((unused)) int sig)
 {
     printf("sigint_handler");
     isRunning = 0;
@@ -19,12 +19,12 @@ int main(){
     //创建套接字
     SOCKET servSock = socket(AF_INET, SOCK_STREAM, 0);
     //绑定套接字
-    struct sockaddr_in sockAddr;
-    memset(&sockAddr, 0, sizeof(sockAddr));  //每个字节都用0填充
-    sockAddr.sin_family = PF_INET;  //使用IPv4地址
-    sockAddr.sin_addr.s_addr = inet_addr("127.0.0.1");  //具体的IP地址
-    sockAddr.sin_port = htons(10086);  //端口
-    bind(servSock, (SOCKADDR*)&sockAddr, sizeof(SOCKADDR));
+    struct sockaddr_in sockAddress;
+    memset(&sockAddress, 0, sizeof(sockAddress));  //每个字节都用0填充
+    sockAddress.sin_family = PF_INET;  //使用IPv4地址
+    sockAddress.sin_addr.s_addr = inet_addr("127.0.0.1");  //具体的IP地址
+    sockAddress.sin_port = htons(10086);  //端口
+    __attribute__((unused)) int r = bind(servSock, (SOCKADDR*)&sockAddress, sizeof(SOCKADDR));
     //进入监听状态
     listen(servSock, 20);
     //接收客户端请求
@@ -33,17 +33,17 @@ int main(){
     signal(SIGILL, sigint_handler);
     // 循环接受客户端的请求
     while(isRunning){
-        SOCKADDR clntAddr;
+        SOCKADDR clientAddress;
         int nSize = sizeof(SOCKADDR);
-        SOCKET clntSock = accept(servSock, (SOCKADDR*)&clntAddr, &nSize);
+        SOCKET clientSock = accept(servSock, (SOCKADDR*)&clientAddress, &nSize);
         char buffer[BUF_SIZE];  //缓冲区
-        int strLen = recv(clntSock, buffer, BUF_SIZE, 0);  //接收客户端发来的数据
+        // int strLen = recv(clientSock, buffer, BUF_SIZE, 0);  //接收客户端发来的数据
         printf("Message form client: %s", buffer);
         // 发送 server 字符给客户端
-        send(clntSock, "hello client\n", 13, 0);
-        // send(clntSock, buffer, strLen, 0);  //将数据原样返回
+        send(clientSock, "hello client\n", 13, 0);
+        // send(clientSock, buffer, strLen, 0);  //将数据原样返回
         //关闭套接字
-        closesocket(clntSock);
+        closesocket(clientSock);
 
         //终止 DLL 的使用
         // 休眠1秒

@@ -2,25 +2,27 @@
 #include <semaphore.h>
 #include <pthread.h>
 
-void thread1_func(void *arg)
+void* thread1_func(void *arg)
 {
     sem_t *sem = (sem_t *)arg;
     sem_wait(sem);
     printf("thread1_func \n");
+    return (void *) 1;
 
 }
 
-void thread2_func(void *arg)
+void* thread2_func(void *arg)
 {
     sem_t *sem = (sem_t *)arg;
     printf("thread2_func \n");
     sem_post(sem);
+    return(void *)2;
 }
 
 int main() {
     printf("sem begin---------->\n");
     //初始化信号量
-    sem_t sem,sem1;
+    __attribute__((unused)) sem_t sem,sem1;
     sem_init(&sem, 0, 0);
     //创建一个线程
     pthread_t thread1;
