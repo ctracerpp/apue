@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <WinSock2.h>
+#include <winsock2.h>
 #pragma comment(lib, "ws2_32.dll")  //加载 ws2_32.dll
 
 #define BUF_SIZE 100
